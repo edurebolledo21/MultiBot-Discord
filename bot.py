@@ -1,4 +1,5 @@
 from email import message
+import email
 from numbers import Integral
 import string
 from dotenv import load_dotenv
@@ -142,17 +143,43 @@ async def on_message(message):
             await message.channel.send(f'Weather: {clima}')
             await message.channel.send(f'{bandera}')
             
-    if message.content.startswith('$crear'):
-        first_name = message.content.split(' ')[1]
-        last_name = message.content.split(' ')[2]
-        full_name = f'{first_name} {last_name}'
-        cur.execute('INSERT INTO users (discord_id, name) VALUES (?, ?)', [message.author.id, full_name])
-        connectionDB.commit()
-        await message.channel.send('usario creado')
-
-    if message.content.startswith('!BorrarUsuario'):
-        cur.execute('DELETE FROM users WHERE discord_id = ?', [message.author.id])
-        connectionDB.commit()
-        await message.channel.send('Usuario Eliminado!')
-
+    if message.content.startswith('$jugador'):       
+        nombre = message.content.split(' ')[1]
+        apellido = message.content.split(' ')[2]
+        nombre_completo = f'{nombre} {apellido}'
+        responseId = requests.get(f'http://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code=&name_part=%27{nombre}%20{apellido}%27')
+        player_id = responseId.json()
+        print (player_id)
+        
 client.run(os.environ['TOKEN'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # if message.content.startswith('$crear'):
+    #     first_name = message.content.split(' ')[1]
+    #     last_name = message.content.split(' ')[2]
+    #     full_name = f'{first_name} {last_name}'
+    #     email = message.content.split(' ')[3]
+    #     password = message.content.split(' ')[4]
+    #     confirm_pass = message.content.split(' ')[5]
+    #     response = requests.post('http://api.cup2022.ir/api/v1/user',
+    #     data = {'name': full_name, 'email': email, 'password': password, 'confirmar pass': confirm_pass})
+    #     cur.execute('INSERT INTO users (discord_id, name, email, password) VALUES (?, ?, ?, ?)', [message.author.id, full_name, email, password])
+    #     connectionDB.commit()
+    #     await message.channel.send('usario creado')
+
+    # if message.content.startswith('!BorrarUsuario'):
+    #     cur.execute('DELETE FROM users WHERE discord_id = ?', [message.author.id])
+    #     connectionDB.commit()
+    #     await message.channel.send('Usuario Eliminado!')

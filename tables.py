@@ -4,5 +4,10 @@ cur = connectionDB.cursor()
 
 cur.execute('''CREATE TABLE IF NOT EXISTS users(
     discord_id TEXT PRIMARY KEY,
-    name TEXT
+    name TEXT,
+    email TEXT,
+    token TEXT,
+    password TEXT
 )''')
+
+connectionDB.commit()
