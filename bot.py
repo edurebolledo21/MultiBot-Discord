@@ -4,6 +4,7 @@ import email
 from numbers import Integral
 import string
 from turtle import position
+from types import NoneType
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -260,6 +261,40 @@ async def on_message(message):
             await message.channel.send(f'J: {hr}')
             await message.channel.send(f'PRO: {Avg}')     
 
+    if message.content.startswith('$teem'):
+        from datetime import date
+        fecha = str(date.today().year)
+        teamName = requests.get(f"http://lookup-service-prod.mlb.com/json/named.team_all_season.bam?sport_code='mlb'&all_star_sw='N'&sort_order=name_asc&season='{fecha}'")
+        responseTeem = teamName.json()
+        responseRow = responseTeem['team_all_season']['queryResults']['row']
+        if message.content.__contains__(' '+' '+' '):
+            city  = message.content.split(' ')[1]
+            name = message.content.split(' ')[2] 
+            name_2 = message.content.split(' ')[3]
+            team_name = f'{city} {name} {name_2}'
+        else:
+            city  = message.content.split(' ')[1]
+            name = message.content.split(' ')[2] 
+            team_name = f'{city} {name}'    
+        team_lower = team_name.lower()
+        def getTeem(teem):
+            for equipo in responseRow:
+                if equipo['name_display_long'].lower() == teem:
+                    return equipo
+        teammlb = getTeem(team_lower)
+        leage = teammlb['league_full']
+        city_team = teammlb['address_city']
+        season_team = teammlb['season']
+        stadium = teammlb['venue_short']
+        file = teammlb['file_code']
+        file_code = f"https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/{file}.png&h=200&w=200"
+        
+        await message.channel.send(f'{file_code}')
+        await message.channel.send(f'Liga: {leage} ')
+        await message.channel.send(f'Ciudad: {city_team} ')
+        await message.channel.send(f'Temporada: {season_team} ') 
+        await message.channel.send(f'Stadium: {stadium} ') 
+    
 
 
 client.run(os.environ['TOKEN'])
