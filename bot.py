@@ -148,20 +148,20 @@ async def on_message(message):
             
 #Mlb players app
     
+    #player id:
     def playerid(name):
                 datos_jugador = requests.get(f"http://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code=&name_part='{name}'")
                 response_id = datos_jugador.json()
                 player_id = response_id['search_player_all']['queryResults']['row']['player_id']
                 return player_id
     
+    #player details
     if message.content.startswith('$jugador'): 
-        #Player id
         nombre = message.content.split(' ')[1]
         apellido = message.content.split(' ')[2]
         full_name = f'{nombre} {apellido}'
         result_id = playerid(full_name)
-        p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/{result_id}/headshot/67/current"   
-        #player details
+        p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_150,q_auto:best/v1/people/{result_id}/headshot/67/current"   
         details = requests.get(f"http://lookup-service-prod.mlb.com/json/named.player_info.bam?sport_code='mlb'&player_id='{result_id}'")
         response_details = details.json()
         name = response_details['player_info']['queryResults']['row']['name_display_first_last']
@@ -175,37 +175,37 @@ async def on_message(message):
         age = response_details['player_info']['queryResults']['row']['age']
         weight = response_details['player_info']['queryResults']['row']['weight']
 
-        #date and debut
+    #date and debut
         date = birthday.split('T')[0]
         date_debut = debut.split('T')[0]
-        #weight in kg
+    #weight in kg
         weight_kg = int(weight) / 2.205
         kg_round = round(weight_kg, 2)
-        #height in m
+    #height in m
         height_m = int(height) / 3.281
         m_round = round(height_m, 2)
 
-        await message.channel.send(f'{p}')
-        await message.channel.send(f'Nombre: {name}')
-        await message.channel.send(f'Nacimiento: {date}, {city}, {country}')
-        await message.channel.send(f'Edad: {age} años')
-        await message.channel.send(f'Equipo: {team}')
-        await message.channel.send(f'Posición: {position}')
-        await message.channel.send(f'Debut: {date_debut}')
-        await message.channel.send(f'Estatura: {m_round} m Peso: {kg_round} kg')
+        cargando = await message.channel.send('Cargando...')
+        await cargando.edit(content =f'{p}')
+        await message.channel.send(f'**Nombre**: {name}')
+        await message.channel.send(f'**Nacimiento**: {date}, {city}, {country}')
+        await message.channel.send(f'**Edad**: {age} años')
+        await message.channel.send(f'**Equipo**: {team}')
+        await message.channel.send(f'**Posición**: {position}')
+        await message.channel.send(f'**Debut**: {date_debut}')
+        await message.channel.send(f'**Estatura**: {m_round} m **Peso**: {kg_round} kg')
 
-#player's career
+    #player's career
     if message.content.startswith('$stats'):
         
-        #stats career by year
+    #stats career by year
         if message.content.__contains__('2') | message.content.__contains__('1'):
-            #Player id
             year = message.content.split(' ')[3]
             nombre = message.content.split(' ')[1]
             apellido = message.content.split(' ')[2]
             full_name = f'{nombre} {apellido}'
             result_id = playerid(full_name)
-            p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/{result_id}/headshot/67/current"   
+            p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_150,q_auto:best/v1/people/{result_id}/headshot/67/current"   
             details = requests.get(f"http://lookup-service-prod.mlb.com/json/named.sport_hitting_tm.bam?league_list_id='mlb'&game_type='R'&season='{year}'&player_id='{result_id}'")
             response_career = details.json()
             hits = response_career['sport_hitting_tm']['queryResults']['row']['h']
@@ -219,25 +219,23 @@ async def on_message(message):
             cp = response_career['sport_hitting_tm']['queryResults']['row']['rbi'] 
             season = response_career['sport_hitting_tm']['queryResults']['row']['season']
 
-            await message.channel.send(f'{p}')
-            await message.channel.send(f'Temporada: {season}')
-            await message.channel.send(f'JJ: {jjugados} ')
-            await message.channel.send(f'AB: {Vb}')
-            await message.channel.send(f'C: {carreras}')
-            await message.channel.send(f'H: {hits}')
-            await message.channel.send(f'CP: {cp}')
-            await message.channel.send(f'BB: {Bb}')
-            await message.channel.send(f'P: {ponches}')
-            await message.channel.send(f'J: {hr}')
-            await message.channel.send(f'PRO: {Avg}') 
+            cargando = await message.channel.send('Cargando...')
+            await cargando.edit(content =f'{p}')
+            await message.channel.send(f''' 
+Temporada: {season} 
+**JJ**: {jjugados}   **AB**: {Vb} 
+**C**: {carreras}  **H**: {hits} 
+**CP**: {cp}  **BB**: {Bb} 
+**P**: {ponches}  **J**: {hr} 
+**PRO**: {Avg} ''')            
         
-        #stats career
+    #stats career
         else:
             nombre = message.content.split(' ')[1]
             apellido = message.content.split(' ')[2]
             full_name = f'{nombre} {apellido}'
             result_id = playerid(full_name)
-            p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/{result_id}/headshot/67/current"   
+            p = f"https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_150,q_auto:best/v1/people/{result_id}/headshot/67/current"   
             details = requests.get(f"http://lookup-service-prod.mlb.com/json/named.sport_career_hitting.bam?league_list_id='mlb'&game_type='R'&player_id='{result_id}'")
             response_career = details.json()
             hits = response_career['sport_career_hitting']['queryResults']['row']['h']
@@ -249,52 +247,64 @@ async def on_message(message):
             Vb  = response_career['sport_career_hitting']['queryResults']['row']['ab']
             jjugados = response_career['sport_career_hitting']['queryResults']['row']['g']
             cp = response_career['sport_career_hitting']['queryResults']['row']['rbi']
+            
+            cargando = await message.channel.send('Cargando...')
+            await cargando.edit(content =f'{p}')
+            await message.channel.send(f''' 
+**JJ**: {jjugados}   **AB**: {Vb} 
+**C**: {carreras}  **H**: {hits} 
+**CP**: {cp}  **BB**: {Bb} 
+**P**: {ponches}  **J**: {hr} 
+**PRO**: {Avg} ''')     
 
-            await message.channel.send(f'{p}')
-            await message.channel.send(f'JJ: {jjugados} ')
-            await message.channel.send(f'AB: {Vb}')
-            await message.channel.send(f'C: {carreras}')
-            await message.channel.send(f'H: {hits}')
-            await message.channel.send(f'CP: {cp}')
-            await message.channel.send(f'BB: {Bb}')
-            await message.channel.send(f'P: {ponches}')
-            await message.channel.send(f'J: {hr}')
-            await message.channel.send(f'PRO: {Avg}')     
-
-    if message.content.startswith('$teem'):
+#team mlb
+    if message.content.startswith('$team'):
         from datetime import date
         fecha = str(date.today().year)
         teamName = requests.get(f"http://lookup-service-prod.mlb.com/json/named.team_all_season.bam?sport_code='mlb'&all_star_sw='N'&sort_order=name_asc&season='{fecha}'")
         responseTeem = teamName.json()
         responseRow = responseTeem['team_all_season']['queryResults']['row']
-        if message.content.__contains__(' '+' '+' '):
-            city  = message.content.split(' ')[1]
-            name = message.content.split(' ')[2] 
-            name_2 = message.content.split(' ')[3]
-            team_name = f'{city} {name} {name_2}'
-        else:
-            city  = message.content.split(' ')[1]
-            name = message.content.split(' ')[2] 
-            team_name = f'{city} {name}'    
-        team_lower = team_name.lower()
-        def getTeem(teem):
+        name_team = message.content.split(' ',1)[1]   
+        team_lower = name_team.lower()
+        def getTeem(team):
             for equipo in responseRow:
-                if equipo['name_display_long'].lower() == teem:
+                if equipo['name_display_long'].lower() == team:
                     return equipo
         teammlb = getTeem(team_lower)
         leage = teammlb['league_full']
+        team_name = teammlb['name_display_long']
         city_team = teammlb['address_city']
         season_team = teammlb['season']
         stadium = teammlb['venue_short']
         file = teammlb['file_code']
-        file_code = f"https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/{file}.png&h=200&w=200"
+        location = teammlb['address_line1']
+        file_code = f"https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/{file}.png&h=150&w=150"
         
-        await message.channel.send(f'{file_code}')
-        await message.channel.send(f'Liga: {leage} ')
-        await message.channel.send(f'Ciudad: {city_team} ')
-        await message.channel.send(f'Temporada: {season_team} ') 
-        await message.channel.send(f'Stadium: {stadium} ') 
-    
+        cargando = await message.channel.send('Cargando...')
+        await cargando.edit(content =f'{file_code}')
+        await message.channel.send(f'**Equipo**: {team_name}') 
+        await message.channel.send(f'**Liga**: {leage}') 
+        await message.channel.send(f'**Ciudad**: {city_team}' )
+        await message.channel.send(f'**Location**: {location}' )
+        await message.channel.send(f'**Stadium**: {stadium}')
+        await message.channel.send(f'**Temporada**: {season_team}') 
+        
+#help
+    if message.content.startswith('$help'):
+        cargando = await message.channel.send('Cargando...')
+        
+        await cargando.edit(content =f'''
+Hola, <@{message.author.id}>, esta es la lista de comandos que se pueden usar en este Bot ACTUALMENTE.
+
+**-** Para usar la Calculadora se debe colocar **$calc** + operación.
+**-** Para ver el valor de una criptomoneda **$crypto** + criptomoneda + divisa.
+**-** Para ver el clima de los paises y ciudades se debe colocar **$clima** + nombre del país o ciudad,
+**-** Para ver información de los paises **$country** + nombre del país.
+**-** Para obtener la informacion de los jugadores de la MLB se debe colocar **$jugador** + nombre y apellido.
+**-** Para obtener las estadisticas de los jugadores de la MLB se debe colocar **$stats** + nombre y apellido.
+**-** Para obtener las estadisticas de los jugadores de la MLB por temporada se debe colocar **$stats** + nombre y apellido + año.
+**-** Para obtener la informacion de los equipos de la MLB se debe colocar **$team** + nombre del equipo.''')
+        
 
 
 client.run(os.environ['TOKEN'])
